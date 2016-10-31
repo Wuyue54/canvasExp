@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta charset="utf-8">
+	<title>Particles </title>
+</head>
+<body>
+	<canvas id ='c'></canvas>
+
+</body>
+	<script type="text/javascript">
+		(function(){
+			var c = document.getElementById('c'),
+				ctx = c.getContext('2d');
+			
+			console.log(c);
+
+			var Width = window.innerWidth,
+				Height = window.innerHeight;
+			
+			c.width = Width;
+			c.height = Height;
+
+			var number = 100;
+			var particles =[];
+			var target = {
+				x : Width/2,
+				y : Height/2
+			};
+			for(var i = 0 ; i <number; i++){
+				particles.push(new Particle());
+			}
+
+			function Particle(){
+				this.x = Math.random()*Width;
+				this.y = Math.random()*Height;
+				this.r = Math.random()*10;
+				this.angle = Math.random()*360;
+				this.color = '#FFF';
+				this.v = Math.random()*10;
+				this.active = true;
+
+				this.update = function(){
+					this.x += this.v*Math.cos(this.angle*Math.PI/180);
+					this.y += this.v*Math.sin(this.angle*Math.PI/108);
+					this.angle += Math.random()*10-5;
+					if(this.x>Width||this.x<0||this.y>Height||this.y<0){
+						this.reset();
+					}
+				};
+
+				this.reset = function(){
+					this.x = Math.random()*Width;
+					this.y = Math.random()*Height;
+					this.r = Math.random()*10;
+					this.angle = Math.random()*360;
+					this.v = Math.random()*20;
+					this.active = true;
+				};
+
+				this.draw = function(){
+					ctx.fillStyle = this.color;
+					ctx.beginPath();
+					ctx.arc(this.x,this.y,this.r,0,Math.PI*2,true);
+					ctx.closePath();
+					ctx.fill();
+					ctx.stroke();
+				};
+			}
+
+			
+
+			function draw(){
+				ctx.fillStyle = "rgba(0,0,0,1)";
+				ctx.fillRect(0,0,Width,Height);
+				for(var i = 0 ; i <number; i++){
+					var  p  =particles[i];
+					p.update();
+					// p.draw();
+
+					if(Math.abs(getDistance(target, p)) < 4000) {
+	                    p.active = 0.3;
+	                    // p.circle.active = 0.6;
+	                } else if(Math.abs(getDistance(target, p)) < 20000) {
+	                    p.active = 0.1;
+	                    // p.circle.active = 0.3;
+	                } else if(Math.abs(getDistance(target, p)) < 40000) {
+	                    p.active = 0.02;
+	                    // p.circle.active = 0.1;
+	                } else {
+	                    p.active = 0;
+	                    // p.circle.active = 0;
+	                }
+	    //             if(!p.active){
+	    //             	return;
+	    //             }
+	    			console.log(p.active);
+	                // p.update();
+	                p.draw();
+					for(var j = 1; j<number; j++){
+						var  p2 = particles[j];
+
+						var disY=p2.y-p.y;
+						var disX=p2.x-p.x;
+
+						var distance= Math.sqrt(disX*disX+disY*disY);
+
+						if(distance<50){
+							ctx.beginPath();
+							ctx.lineWidth = 2;
+							ctx.moveTo(p.x,p.y);
+							ctx.lineTo(p2.x,p2.y);
+							ctx.strokeStyle = p.color;
+							ctx.stroke();
+						}
+					}
+				}
+			}
+
+			setInterval(draw,30);
+			
+			function getDistance(obj1, obj2) {
+		        return Math.pow(obj1.x - obj2.x, 2) + Math.pow(obj1.y - obj2.y, 2);
+		    }
+
+			window.addEventListener('mousemove', function(e){
+				var posx = posy = 0;
+		        if (e.pageX || e.pageY) {
+		            posx = e.pageX;
+		            posy = e.pageY;
+		        }
+		        else if (e.clientX || e.clientY)    {
+		            posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+		            posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+		        }
+		        // target.x = posx;
+		        // target.y = posy;
+		        console.log(posx);
+		        console.log(posy);
+			});
+
+			window.onResize=function(){
+				c.width = Width = window.innerWidth;
+				c.height = Height = window.innerHeight;
+			};
+
+		}());
+	</script>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>canvas experiment</title>
+	<style type="text/css">
+		body{
+			background-color: black;
+			margin:0;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="c"></canvas>
+</body>
+	<script type="text/javascript">	
+	window.onload=function(){
+		var canvas = document.getElementById("c"),
+			ctx=canvas.getContext("2d");
+
+		var Width = window.innerWidth,
+			Height = window.innerHeight;
+		
+		var Num = 20 ;
+
+		canvas.width = Width;
+		canvas.height = Height;
+
+		var Particles =[] ;
+
+		for( var i =0 ; i < Num ; i++){
+				Particles.push(new Particle());
+		}
+
+		function Particle(){
+			this.x = Math.random()*Width;
+			this.y = Math.random()*Height;
+			this.speed = 2;
+			this.radius = Math.random()*15;
+			this.angle = Math.random()*360;
+
+			var r = Math.floor(Math.random()*225),
+				g = Math.floor(Math.random()*255+100),
+				b = Math.floor(Math.random()*255+100),
+				a = Math.random();
+			
+			this.rgba="rgba("+r+","+g+","+b+","+a+")";
+
+		}
+	
+		
+		function draw(){
+			ctx.fillStyle = "rgba(0,0,0,1)";
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+
+			for(var i =0 ;i < Particles.length;i++){
+				var p = Particles[i];
+				ctx.fillStyle = "rgba(0,0,0,1)";
+				ctx.beginPath();
+				ctx.arc(p.x,p.y,p.radius,0,Math.PI*2,true);
+				ctx.closePath();
+				ctx.fillStyle=p.rgba;
+				ctx.fill();
+				p.x=p.x+p.speed*Math.cos(p.angle*Math.PI/180);
+				p.y=p.y+p.speed*Math.sin(p.angle*Math.PI/180);
+
+			/* for(var j=0;j<Particles.length;j++){
+				var distance = 0;
+				var p1 = Particles[j];
+				distance =  (p.x-p1.x)*+(p.x-p1.x)+(p.y-p1.y)*(p.y-p1.y);
+
+			if(distance<30000){
+					ctx.beginPath();
+					ctx.lineWidth = 2;
+					ctx.moveTo(p.x,p.y);
+					ctx.lineTo(p1.x,p1.y);
+					ctx.fillStyle=p.rgba;
+					ctx.closePath();
+					ctx.stroke();
+				}
+			
+			}*/
+					if(p.x<0){
+						p.x=Width;
+						}
+					if(p.x>Width){
+						p.x=0;
+					}
+					if(p.y<0){
+						p.y=Height;
+					}
+					if(p.y>Height){
+						p.y=0;
+					}
+			}
+
+			//alert(Particles.length);
+		}
+
+		setInterval(draw,10);
+
+		window.addEventListener('resize', function() {
+  			canvas.width = Width = window.innerWidth;
+  			canvas.height = Height = window.innerHeight;
+		}, false);
+		
+	}
+
+	</script>
+</html>
